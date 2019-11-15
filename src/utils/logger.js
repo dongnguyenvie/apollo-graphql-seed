@@ -43,4 +43,9 @@ const logger = winston.createLogger({
   ]
 });
 
+logger.on('error', function (info) {
+  // All `info` log messages has now been logged
+  console.log(`extension: info: error`, info)
+});
+
 export default logger;

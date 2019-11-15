@@ -5,7 +5,7 @@ import logger from "./utils/logger";
 import path from "path";
 import uuidv4 from 'uuid/v4';
 
-// logger.info("info 127.0.0.1 - there's no place like home111111111");
+// logger.info(`info 127.0.0.1 -, ${uuidv4()}`);
 // logger.error("error 127.0.0.1 - there's no place like home2222222222");
 
 const app = express();
@@ -17,34 +17,43 @@ app.use(cors());
 let users = {
   1: {
     id: "1",
-    username: "Robin Wieruch1111"
+    username: "Robin Wieruch id=1"
   },
   2: {
     id: "2",
-    username: "Dave Davids1111"
+    username: "Dave Davids id=2"
   }
 };
 
 const schema = gql`
   type Query {
-    me: User
     user(id: ID!): User
+    users: [User!]
+    me: User
   }
   type User {
     username: String!
+    id: String
   }
 `;
 
 const resolvers = {
   Query: {
-    user: (parent, { id }) => {
-      console.log(parent, id);
-      return users[id];
-    },
     me: (parent, args, context) => {
-      console.log(`context`, context)
       return context.me;
     },
+    user: (parent, { id }) => {
+      return users[id];
+    },
+    users: (parent, args, context) => {
+      return Object.values(context.users)
+    }
+  },
+  User: {
+    username: parent => {
+      console.log(`parent`, parent)
+      return parent.username;
+    }
   }
 };
 
@@ -53,6 +62,7 @@ const server = new ApolloServer({
   resolvers, // 
   context: { // Same controller
     me: users[1],
+    users: users
   },
 });
 
