@@ -16,13 +16,28 @@ app.use(cors());
 
 let users = {
   1: {
-    id: "1",
-    username: "Robin Wieruch id=1"
+    id: '1',
+    username: 'Robin Wieruch',
+    messageIds: [1],
   },
   2: {
-    id: "2",
-    username: "Dave Davids id=2"
-  }
+    id: '2',
+    username: 'Dave Davids',
+    messageIds: [2],
+  },
+};
+
+let messages = {
+  1: {
+    id: '1',
+    text: 'Hello World',
+    userId: '1',
+  },
+  2: {
+    id: '2',
+    text: 'By World',
+    userId: '2',
+  },
 };
 
 const schema = gql`
@@ -30,14 +45,32 @@ const schema = gql`
     user(id: ID!): User
     users: [User!]
     me: User
+
+    messages: [Message!]!
+    message(id: ID!): Message!
   }
+
+  type Mutation {
+    createMessage(text: String!): Message!
+  }
+
   type User {
     username: String!
     id: String
+    messages: [Message!]
+  }
+
+  type Message {
+    id: ID!
+    text: String!
+    user: User!
   }
 `;
 
 const resolvers = {
+  /**
+   * Query
+   */
   Query: {
     me: (parent, args, context) => {
       return context.me;
@@ -47,20 +80,61 @@ const resolvers = {
     },
     users: (parent, args, context) => {
       return Object.values(context.users)
+    },
+    messages: (parent, args, context) => {
+      return Object.values(messages)
+    },
+    message: (parent, args, context) => {
+      return messages[args.id];
     }
   },
+
+  /**
+   * Multation
+   */
+  Mutation: {
+    createMessage: (parent, args, { me }) => {
+      const id = uuidv4();
+      const { text } = args
+      const message = {
+        id,
+        text,
+        userId: me.id,
+      };
+      messages[id] = message;
+      users[me.id].messageIds.push(id);
+      return message;
+    },
+  },
+
+  /**
+   * Same controller
+   */
   User: {
     username: parent => {
-      console.log(`parent`, parent)
       return parent.username;
+    },
+    id: parent => {
+      return `format output id: ${parent.id}`
+    },
+    messages: (user, args, context) => {
+      return Object.values(messages).filter(
+        message => message.userId === user.id,
+      );
     }
-  }
+  },
+  Message: {
+    user: (parent, args, context) => {
+      console.log(`parent`, parent)
+      return context.users[parent.userId];
+    },
+  },
 };
 
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers, // 
-  context: { // Same controller
+  context: { // Same model
     me: users[1],
     users: users
   },
