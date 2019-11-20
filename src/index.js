@@ -4,7 +4,7 @@ import { ApolloServer, gql } from "apollo-server-express";
 import logger from "./utils/logger";
 import path from "path";
 import uuidv4 from 'uuid/v4';
-
+import schema from './schema'
 // logger.info(`info 127.0.0.1 -, ${uuidv4()}`);
 // logger.error("error 127.0.0.1 - there's no place like home2222222222");
 
@@ -39,33 +39,6 @@ let messages = {
     userId: '2',
   },
 };
-
-const schema = gql`
-  type Query {
-    user(id: ID!): User
-    users: [User!]
-    me: User
-
-    messages: [Message!]!
-    message(id: ID!): Message!
-  }
-
-  type Mutation {
-    createMessage(text: String!): Message!
-  }
-
-  type User {
-    username: String!
-    id: String
-    messages: [Message!]
-  }
-
-  type Message {
-    id: ID!
-    text: String!
-    user: User!
-  }
-`;
 
 const resolvers = {
   /**
