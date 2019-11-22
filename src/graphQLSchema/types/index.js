@@ -13,7 +13,6 @@ const linkSchema = gql`
     _: Boolean
   }
 `;
-
 const typesArray = fileLoader(path.join(__dirname, './*.graphql'));
 const types = mergeTypes([linkSchema, ...typesArray], { all: true });
 
