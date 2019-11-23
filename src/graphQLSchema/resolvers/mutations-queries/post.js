@@ -1,29 +1,29 @@
-import { AuthenticationError } from "apollo-server";
+import { AuthenticationError } from 'apollo-server'
 
 export default {
   Query: {
-    post: async (parent, { id }, { models: { postModel }, me }, info) => {
+    post: async (parent, { id }, { models, me }, info) => {
       if (!me) {
-        throw new AuthenticationError("You are not authenticated");
+        throw new AuthenticationError('You are not authenticated')
       }
-      const post = await postModel.findById({ _id: id }).exec();
-      return post;
+      const post = await models.post.findById({ _id: id }).exec()
+      return post
     },
-    posts: async (parent, args, { models: { postModel }, me }, info) => {
+    posts: async (parent, args, { models, me }, info) => {
       if (!me) {
-        throw new AuthenticationError("You are not authenticated");
+        throw new AuthenticationError('You are not authenticated')
       }
-      const posts = await postModel.find({ author: me.id }).exec();
-      return posts;
+      const posts = await models.post.find({ author: me.id }).exec()
+      return posts
     }
   },
   Mutation: {
-    createPost: async (parent, { title, content }, { models: { postModel }, me }, info) => {
+    createPost: async (parent, { title, content }, { models, me }, info) => {
       if (!me) {
-        throw new AuthenticationError("You are not authenticated");
+        throw new AuthenticationError('You are not authenticated')
       }
-      const post = await postModel.create({ title, content, author: me.id });
-      return post;
+      const post = await models.post.create({ title, content, author: me.id })
+      return post
     }
   }
-};
+}

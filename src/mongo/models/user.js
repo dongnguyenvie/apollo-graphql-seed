@@ -1,4 +1,4 @@
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
@@ -20,8 +20,8 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', function() {
-//   const hashedPassword = bcrypt.hashSync(this.password, 12);
-  this.password = 'hashedPassword';
+  const hashedPassword = bcrypt.hashSync(this.password, 12);
+  this.password = hashedPassword;
 });
 
 export const user = mongoose.model('user', userSchema);
