@@ -6,6 +6,7 @@ import path from 'path'
 // import uuidv4 from 'uuid/v4';
 import * as mongo from './mongo'
 import mongoose from 'mongoose'
+import jwt from 'jsonwebtoken'
 import graphQLSchema from './graphQLSchema'
 
 const app = express()
@@ -15,12 +16,10 @@ app.use('/logs', express.static(path.join(__basedir, '.logs')))
 app.use(cors())
 
 const getUser = async req => {
-  // const token = req.headers['token'];
-  let token = true
+  const token = req.headers['token'];
   if (token) {
     try {
-      return { id: 1, name: 'dong_nguyen' }
-      // return await jwt.verify(token, 'riddlemethis');
+      return await jwt.verify(token, 'riddlemethis');
     } catch (e) {
       throw new AuthenticationError('Your session expired. Sign in again.')
     }
@@ -32,7 +31,6 @@ const server = new ApolloServer({
   context: async ({ req }) => {
     if (req) {
       const me = await getUser(req)
-
       return {
         me,
         models: mongo.models

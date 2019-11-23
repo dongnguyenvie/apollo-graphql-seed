@@ -29,6 +29,12 @@ export default {
       return {
         token
       }
+    },
+    isLogin: async (parent, _, { models, me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('Invalid credentials')
+      }
+      return me
     }
   },
   Mutation: {
