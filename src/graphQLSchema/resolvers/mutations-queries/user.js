@@ -31,9 +31,6 @@ export default {
       }
     },
     isLogin: async (parent, _, { models, me }, info) => {
-      if (!me) {
-        throw new AuthenticationError('Invalid credentials')
-      }
       return me
     }
   },

@@ -1,6 +1,6 @@
 type User {
   id: ID!
-  name: String!
+  name: String! @upper
   posts: [Post!]!
 }
 
@@ -17,7 +17,7 @@ type ParseToken {
 type Query {
   user(id: ID!): User!
   login(name: String!, password: String!): Token!
-  isLogin: ParseToken
+  isLogin: ParseToken @auth(requires: ADMIN)
 }
 
 type Mutation {

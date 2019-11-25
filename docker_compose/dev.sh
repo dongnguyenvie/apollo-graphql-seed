@@ -3,4 +3,4 @@
 cd /usr/app
 npm install nodemon --global
 npm install
-nodemon -L --inspect start.js
+nodemon -L --inspect=0.0.0.0 start.js

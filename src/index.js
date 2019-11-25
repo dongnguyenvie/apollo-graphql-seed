@@ -32,9 +32,10 @@ const server = new ApolloServer({
   ...graphQLSchema,
   context: async ({ req }) => {
     if (req) {
-      const me = await getUser(req)
+      // const me = await getUser(req)
       return {
-        me,
+        // me,
+        headers: req.headers,
         models: mongo.models
       }
     }
@@ -47,4 +48,5 @@ app.listen({ port: 3000 }, () => {
   console.log(process.env.MONGO_URL)
   mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/graphql')
   console.log('Apollo Server on http://localhost:3000/graphql')
+  console.clear();
 })
