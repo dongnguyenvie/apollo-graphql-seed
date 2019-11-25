@@ -16,8 +16,8 @@ type ParseToken {
 
 type Query {
   user(id: ID!): User!
-  login(name: String!, password: String!): Token!
-  isLogin: ParseToken @auth(requires: ADMIN)
+  login(name: String!, password: String!): Token!  @me
+  isLogin: ParseToken @auth(requires: ADMIN) @me
 }
 
 type Mutation {

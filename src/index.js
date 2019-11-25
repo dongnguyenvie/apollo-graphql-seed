@@ -7,7 +7,6 @@ import path from 'path'
 // import uuidv4 from 'uuid/v4';
 import * as mongo from './mongo'
 import mongoose from 'mongoose'
-import jwt from 'jsonwebtoken'
 import graphQLSchema from './graphQLSchema'
 
 dotenv.config()
@@ -17,24 +16,11 @@ app.use('/logs', express.static(path.join(__basedir, '.logs')))
 
 app.use(cors())
 
-const getUser = async req => {
-  const token = req.headers['token'];
-  if (token) {
-    try {
-      return await jwt.verify(token, 'riddlemethis');
-    } catch (e) {
-      throw new AuthenticationError('Your session expired. Sign in again.')
-    }
-  }
-}
-
 const server = new ApolloServer({
   ...graphQLSchema,
   context: async ({ req }) => {
     if (req) {
-      // const me = await getUser(req)
       return {
-        // me,
         headers: req.headers,
         models: mongo.models
       }

@@ -9,6 +9,7 @@ export default {
       return user
     },
     login: async (parent, { name, password }, { models }, info) => {
+
       const user = await models.user.findOne({ name }).exec()
 
       if (!user) {
@@ -22,7 +23,6 @@ export default {
       }
 
       const token = jwt.sign({ id: user.id }, 'riddlemethis', { expiresIn: 24 * 10 * 50 })
-
       return {
         token
       }

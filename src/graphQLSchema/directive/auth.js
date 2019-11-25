@@ -1,10 +1,12 @@
+import jwt from 'jsonwebtoken'
 import { SchemaDirectiveVisitor } from 'apollo-server';
 import { defaultFieldResolver } from 'graphql';
 import { AuthenticationError } from 'apollo-server'
-import jwt from 'jsonwebtoken'
 
 const getUser = async (ctx) => {
     const token = ctx.headers['token'];
+    console.log(222222221111111111111)
+
     if (token) {
         try {
             return await jwt.verify(token, 'riddlemethis');
@@ -16,7 +18,7 @@ const getUser = async (ctx) => {
 /**
  * args[2] = context
  * @see(@link https://www.apollographql.com/docs/graphql-tools/schema-directives/)
- * 
+ *  @autha(requires: ADMIN)
  */
 export default {
     auth: class AuthDirective extends SchemaDirectiveVisitor {
@@ -45,12 +47,12 @@ export default {
                 field.resolve = async function (...args) {
                     // Get the required Role from the field first, falling back
                     // to the objectType if no Role is required by the field:
-                    // const requiredRole =
-                    //     field._requiredAuthRole ||
-                    //     objectType._requiredAuthRole;
-                    // if (!requiredRole) {
-                    //     return resolve.apply(this, args);
-                    // }
+                    const requiredRole =
+                        field._requiredAuthRole ||
+                        objectType._requiredAuthRole;
+                    if (!requiredRole) {
+                        return resolve.apply(this, args);
+                    }
 
                     const context = args[2];
                     const me = await getUser(context);
