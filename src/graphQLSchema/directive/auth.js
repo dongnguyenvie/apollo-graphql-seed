@@ -13,7 +13,11 @@ const getUser = async (ctx) => {
         }
     }
 }
-
+/**
+ * args[2] = context
+ * @see(@link https://www.apollographql.com/docs/graphql-tools/schema-directives/)
+ * 
+ */
 export default {
     auth: class AuthDirective extends SchemaDirectiveVisitor {
         visitObject(type) {
@@ -41,12 +45,12 @@ export default {
                 field.resolve = async function (...args) {
                     // Get the required Role from the field first, falling back
                     // to the objectType if no Role is required by the field:
-                    const requiredRole =
-                        field._requiredAuthRole ||
-                        objectType._requiredAuthRole;
-                    if (!requiredRole) {
-                        return resolve.apply(this, args);
-                    }
+                    // const requiredRole =
+                    //     field._requiredAuthRole ||
+                    //     objectType._requiredAuthRole;
+                    // if (!requiredRole) {
+                    //     return resolve.apply(this, args);
+                    // }
 
                     const context = args[2];
                     const me = await getUser(context);
@@ -54,9 +58,9 @@ export default {
                     //     throw new Error("not authorized");
                     // }
                     if (!me) {
-                        throw new AuthenticationError("not authorized");
+                        throw new AuthenticationError("You are not authenticated");
                     }
-
+                    args[2].me = me;
                     return resolve.apply(this, args);
                 };
             });
