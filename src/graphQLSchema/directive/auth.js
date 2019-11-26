@@ -3,10 +3,8 @@ import { SchemaDirectiveVisitor } from 'apollo-server';
 import { defaultFieldResolver } from 'graphql';
 import { AuthenticationError } from 'apollo-server'
 
-const getUser = async (ctx) => {
-    const token = ctx.headers['token'];
-    console.log(222222221111111111111)
-
+const getUser = async (req) => {
+    const token = req.headers['token'];
     if (token) {
         try {
             return await jwt.verify(token, 'riddlemethis');
@@ -54,8 +52,8 @@ export default {
                         return resolve.apply(this, args);
                     }
 
-                    const context = args[2];
-                    const me = await getUser(context);
+                    const [, , ctx, info] = args;
+                    const me = await getUser(ctx.req);
                     // if (!user.hasRole(requiredRole)) {
                     //     throw new Error("not authorized");
                     // }

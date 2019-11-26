@@ -21,7 +21,8 @@ const server = new ApolloServer({
   context: async ({ req }) => {
     if (req) {
       return {
-        headers: req.headers,
+        SECRET: process.env.SECRET || 'dong_nguyen',
+        req,
         models: mongo.models
       }
     }
